@@ -1,6 +1,7 @@
 import User from "../models/User.js"
 import bcrypt from "bcryptjs"
 import { createError } from "../util/error.js";
+import jwt from "jsonwebtoken"
 
 export const register=async(req,res,next)=>{
 
@@ -20,8 +21,6 @@ export const register=async(req,res,next)=>{
  }
 }
 
-
-
 export const login=async(req,res,next)=>{
 
  try {
@@ -35,11 +34,18 @@ export const login=async(req,res,next)=>{
     if(!isPasswordCorrect){
         return next (createError(400,"wrong passwor or maybe uername"))
     }
+
+    const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)
     // we use that to do not show the password and isAdmin for the client side
     //use user.doc cos user under ._doc
     const{password,isAdmin,...otherDetails}=user._doc
     //if it's ok we send our user
-    res.status(200).json({...otherDetails})
+    res
+    .cookie("access_token",token,{
+        httpOnly:true
+    })
+    .status(200)
+    .json({...otherDetails})
 } catch (err) {
     next(err)
  }
