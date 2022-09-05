@@ -1,5 +1,6 @@
 import express from "express"
 import Hotel from "../models/Hotel.js"
+import { createError } from "../util/error.js"
 //if we use import we should put the extension of the file
 const router=express.Router()
 
@@ -47,13 +48,13 @@ router.get("/:id",async(req,res)=>{
     }
 })
 //get all hotel 
-router.get("/",async(req,res)=>{
+router.get("/",async(req,res,next)=>{
+
     try {
        const getAllHotle = await Hotel.find()
         res.status(200).json(getAllHotle)
     } catch (err) {
-        console.error(err)
-        res.status(500).json(err)
+      next(err)
     }
 })
 
