@@ -40,6 +40,7 @@ export const login=async(req,res,next)=>{
     //use user.doc cos user under ._doc
     const{password,isAdmin,...otherDetails}=user._doc
     //if it's ok we send our user
+    //semd token in the cookies to humdele it
     res
     .cookie("access_token",token,{
         httpOnly:true
